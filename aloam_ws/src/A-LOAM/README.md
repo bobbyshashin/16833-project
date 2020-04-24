@@ -1,3 +1,33 @@
+# Usage (16833 project) 04/23/2020
+1. Download [KITTI Odometry dataset](http://www.cvlibs.net/datasets/kitti/eval_odometry.php), we do not need grayscale and color, and orgnize it as following:
+```bash
+├── poses
+│   ├── 00.txt
+│   ├── ......
+│   └── 10.txt
+└── sequences
+│   ├── 00
+│   │   ├── velodyne
+│   │   │   ├── 000000.bin
+│   │   │   ├── ......
+│   │   │   └── xxxxxx.bin
+│   │   ├── calib.txt
+│   │   └── times.txt
+│   ├── ...
+│   └── 21
+```
+2. Modify line 5,6,7 in [kitti_help.launch](../launch/kitti_helper.launch).
+3. Run kitti_helper to generate rosbags (after catkin_make, source)
+```bash
+roslaunch aloam_velodyne kitti_helper.launch
+```
+4. (3) saves KITTI rosbags in local, so we can directly play rosbags as input
+```bash
+roslaunch aloam_velodyne aloam_velodyne_HDL_64.launch
+rosbag play PATH/TO/KITTI_ROSBAG/SEQUENCE_NUMBER.bag
+```
+
+
 # A-LOAM
 ## Advanced implementation of LOAM
 

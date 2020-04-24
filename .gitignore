@@ -1,1 +1,4 @@
 .vscode/
+aloam_ws/build
+aloam_ws/devel
+aloam_ws/.catkin_workspace

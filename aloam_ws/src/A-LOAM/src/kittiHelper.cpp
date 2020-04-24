@@ -52,9 +52,9 @@ int main(int argc, char** argv)
 
     ros::Publisher pub_laser_cloud = n.advertise<sensor_msgs::PointCloud2>("/velodyne_points", 2);
 
-    image_transport::ImageTransport it(n);
-    image_transport::Publisher pub_image_left = it.advertise("/image_left", 2);
-    image_transport::Publisher pub_image_right = it.advertise("/image_right", 2);
+    // image_transport::ImageTransport it(n);
+    // image_transport::Publisher pub_image_left = it.advertise("/image_left", 2);
+    // image_transport::Publisher pub_image_right = it.advertise("/image_right", 2);
 
     ros::Publisher pubOdomGT = n.advertise<nav_msgs::Odometry> ("/odometry_gt", 5);
     nav_msgs::Odometry odomGT;
@@ -68,7 +68,7 @@ int main(int argc, char** argv)
     std::string timestamp_path = "sequences/" + sequence_number + "/times.txt";
     std::ifstream timestamp_file(dataset_folder + timestamp_path, std::ifstream::in);
 
-    std::string ground_truth_path = "results/" + sequence_number + ".txt";
+    std::string ground_truth_path = "poses/" + sequence_number + ".txt";
     std::ifstream ground_truth_file(dataset_folder + ground_truth_path, std::ifstream::in);
 
     rosbag::Bag bag_out;
@@ -86,11 +86,11 @@ int main(int argc, char** argv)
     while (std::getline(timestamp_file, line) && ros::ok())
     {
         float timestamp = stof(line);
-        std::stringstream left_image_path, right_image_path;
-        left_image_path << dataset_folder << "sequences/" + sequence_number + "/image_0/" << std::setfill('0') << std::setw(6) << line_num << ".png";
-        cv::Mat left_image = cv::imread(left_image_path.str(), CV_LOAD_IMAGE_GRAYSCALE);
-        right_image_path << dataset_folder << "sequences/" + sequence_number + "/image_1/" << std::setfill('0') << std::setw(6) << line_num << ".png";
-        cv::Mat right_image = cv::imread(left_image_path.str(), CV_LOAD_IMAGE_GRAYSCALE);
+        // std::stringstream left_image_path, right_image_path;
+        // left_image_path << dataset_folder << "sequences/" + sequence_number + "/image_0/" << std::setfill('0') << std::setw(6) << line_num << ".png";
+        // cv::Mat left_image = cv::imread(left_image_path.str(), CV_LOAD_IMAGE_GRAYSCALE);
+        // right_image_path << dataset_folder << "sequences/" + sequence_number + "/image_1/" << std::setfill('0') << std::setw(6) << line_num << ".png";
+        // cv::Mat right_image = cv::imread(left_image_path.str(), CV_LOAD_IMAGE_GRAYSCALE);
 
         std::getline(ground_truth_file, line);
         std::stringstream pose_stream(line);
@@ -104,6 +104,7 @@ int main(int argc, char** argv)
                 gt_pose(i, j) = stof(s);
             }
         }
+        // std::cout << "Debug: " << "Here 1" << std::endl;
 
         Eigen::Quaterniond q_w_i(gt_pose.topLeftCorner<3, 3>());
         Eigen::Quaterniond q = q_transform * q_w_i;
@@ -120,6 +121,8 @@ int main(int argc, char** argv)
         odomGT.pose.pose.position.z = t(2);
         pubOdomGT.publish(odomGT);
 
+        // std::cout << "Debug: " << "Here 2" << std::endl;
+
         geometry_msgs::PoseStamped poseGT;
         poseGT.header = odomGT.header;
         poseGT.pose = odomGT.pose.pose;
@@ -127,9 +130,11 @@ int main(int argc, char** argv)
         pathGT.poses.push_back(poseGT);
         pubPathGT.publish(pathGT);
 
+        // std::cout << "Debug: " << "Here 3" << std::endl;
+
         // read lidar point cloud
         std::stringstream lidar_data_path;
-        lidar_data_path << dataset_folder << "velodyne/sequences/" + sequence_number + "/velodyne/" 
+        lidar_data_path << dataset_folder << "sequences/" + sequence_number + "/velodyne/" 
                         << std::setfill('0') << std::setw(6) << line_num << ".bin";
         std::vector<float> lidar_data = read_lidar_data(lidar_data_path.str());
         std::cout << "totally " << lidar_data.size() / 4.0 << " points in this lidar frame \n";
@@ -137,6 +142,9 @@ int main(int argc, char** argv)
         std::vector<Eigen::Vector3d> lidar_points;
         std::vector<float> lidar_intensities;
         pcl::PointCloud<pcl::PointXYZI> laser_cloud;
+
+        // std::cout << "Debug: " << "Here 4" << std::endl;
+
         for (std::size_t i = 0; i < lidar_data.size(); i += 4)
         {
             lidar_points.emplace_back(lidar_data[i], lidar_data[i+1], lidar_data[i+2]);
@@ -150,25 +158,31 @@ int main(int argc, char** argv)
             laser_cloud.push_back(point);
         }
 
+        // std::cout << "Debug: " << "Here 5" << std::endl;
+
         sensor_msgs::PointCloud2 laser_cloud_msg;
         pcl::toROSMsg(laser_cloud, laser_cloud_msg);
         laser_cloud_msg.header.stamp = ros::Time().fromSec(timestamp);
         laser_cloud_msg.header.frame_id = "/camera_init";
         pub_laser_cloud.publish(laser_cloud_msg);
 
-        sensor_msgs::ImagePtr image_left_msg = cv_bridge::CvImage(laser_cloud_msg.header, "mono8", left_image).toImageMsg();
-        sensor_msgs::ImagePtr image_right_msg = cv_bridge::CvImage(laser_cloud_msg.header, "mono8", right_image).toImageMsg();
-        pub_image_left.publish(image_left_msg);
-        pub_image_right.publish(image_right_msg);
+        // sensor_msgs::ImagePtr image_left_msg = cv_bridge::CvImage(laser_cloud_msg.header, "mono8", left_image).toImageMsg();
+        // sensor_msgs::ImagePtr image_right_msg = cv_bridge::CvImage(laser_cloud_msg.header, "mono8", right_image).toImageMsg();
+        // pub_image_left.publish(image_left_msg);
+        // pub_image_right.publish(image_right_msg);
+
+        // std::cout << "Debug: " << "Here 6" << std::endl;
 
         if (to_bag)
         {
-            bag_out.write("/image_left", ros::Time::now(), image_left_msg);
-            bag_out.write("/image_right", ros::Time::now(), image_right_msg);
+            // bag_out.write("/image_left", ros::Time::now(), image_left_msg);
+            // bag_out.write("/image_right", ros::Time::now(), image_right_msg);
             bag_out.write("/velodyne_points", ros::Time::now(), laser_cloud_msg);
             bag_out.write("/path_gt", ros::Time::now(), pathGT);
             bag_out.write("/odometry_gt", ros::Time::now(), odomGT);
         }
+
+        // std::cout << "Debug: " << "Here 7" << std::endl;
 
         line_num ++;
         r.sleep();
