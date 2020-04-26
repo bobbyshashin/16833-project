@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 import icp
 
-id = '00_corner_last'
+id = '06'
 
 pc_list = pickle.load(open('pc'+id+'.p', 'rb'))
 print(len(pc_list))
@@ -43,7 +43,7 @@ for i in range(len(pc_list)):
                     frame_id_ls.append(key_frame_id) 
             if len(icp_distances_ls) > 0:
                 min_distance = min(icp_distances_ls)
-                if min_distance < 0.6:
+                if min_distance < 1.15:
                     closest_id = frame_id_ls[ np.argmin(icp_distances_ls) ]
                     print("input frame id: {}, closest past frame id: {}, distance: {:.4f}"
                           .format(i, closest_id, min_distance))
@@ -62,8 +62,8 @@ for i in range(len(pc_list)):
 
         past_key_frame[i] = PC
 
-plt.savefig('/home/boshenniu/Downloads/'+id+'.png', dpi=400)
-# plt.show()
+# plt.savefig('/home/boshenniu/Downloads/'+id+'.png', dpi=400)
+plt.show()
 
 
 # fig = plt.figure()
