@@ -8,6 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 import pickle
+import tf
 from scipy.spatial.transform import Rotation as R
 
 import icp
@@ -94,7 +95,8 @@ class LCD():
         pub_msg.pose.pose.position.x = T[0,3]
         pub_msg.pose.pose.position.y = T[1,3]
         pub_msg.pose.pose.position.z = T[2,3]
-        q = R.from_matrix(T[0:3,0:3]).as_quat()
+        # q = R.from_matrix(T[0:3,0:3]).as_quat()
+        q = tf.transformations.quaternion_from_matrix(T)
         pub_msg.pose.pose.orientation.x = q[0]
         pub_msg.pose.pose.orientation.y = q[1]
         pub_msg.pose.pose.orientation.z = q[2]

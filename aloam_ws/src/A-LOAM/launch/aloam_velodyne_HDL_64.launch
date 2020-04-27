@@ -18,6 +18,8 @@
 
     <node pkg="aloam_velodyne" type="alaserMapping" name="alaserMapping" output="screen" />
 
+    <node pkg="aloam_velodyne" type="aloopClosure" name="aloopClosure" output="screen" />
+
     <arg name="rviz" default="true" />
     <group if="$(arg rviz)">
         <node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz" args="-d $(find aloam_velodyne)/rviz_cfg/aloam_velodyne.rviz" />
