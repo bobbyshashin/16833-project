@@ -1,5 +1,6 @@
 .vscode/
 aloam_ws/build
 aloam_ws/devel
+*.p
 aloam_ws/.catkin_workspace
 __pycache__
