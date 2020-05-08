@@ -5,7 +5,7 @@
 $ git clone https://github.com/bobbyshashin/16833-project.git
 $ cd 16833-project/aloam_ws
 $ catkin_make
-$ source devel/setup.bahs
+$ source devel/setup.bash
 ```
 ### Generate KITTI ros bags
 Skip this if you already have kitti rosbags.
@@ -26,7 +26,7 @@ Skip this if you already have kitti rosbags.
 │   ├── ...
 │   └── 21
 ```
-2. Modify line 5,6,7 in [kitti_help.launch](../launch/kitti_helper.launch).
+2. Modify line 5,6,7 in [kitti_help.launch](aloam_ws/src/A-LOAM/launch/kitti_helper.launch).
 3. Run kitti_helper to generate rosbags (after catkin_make, source)
 ```bash
 roslaunch aloam_velodyne kitti_helper.launch
@@ -42,7 +42,7 @@ $ roslaunch aloam_velodyne aloam_velodyne_HDL_64.launch
 $ cd src/A-LOAM/scripts/
 $ python LCD.py
 ```
-3. Play KITTI ros bag.
+3. Play KITTI rosbag.
 ```bash
 $ rosbag play PATH/TO/KITTI_ROSBAG/SEQUENCE_NUMBER.bag
 ```
